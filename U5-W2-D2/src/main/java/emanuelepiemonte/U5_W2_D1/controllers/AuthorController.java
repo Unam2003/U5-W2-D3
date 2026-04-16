@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,9 +25,9 @@ public class AuthorController {
     }
 
     @GetMapping
-    public Page<Author> getUsers(@RequestParam(defaultValue = "0") int page,
-                                 @RequestParam(defaultValue = "10") int size,
-                                 @RequestParam(defaultValue = "name") String sortBy) {
+    public Page<Author> getAuthors(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "10") int size,
+                                   @RequestParam(defaultValue = "name") String sortBy) {
 
         return this.authorService.findAll(page, size, sortBy);
     }
@@ -60,6 +61,17 @@ public class AuthorController {
     @ResponseStatus(HttpStatus.NO_CONTENT) //204
     public void getAuthorByIdAndDelete(@PathVariable UUID authorId) {
         this.authorService.findByIdAndDelete(authorId);
+    }
+
+    //Va bene anche Post
+    @PatchMapping("/{authorId}/avatar")
+    public void uploadAvatar(@RequestParam("profile_picture") MultipartFile file, @PathVariable UUID authorId) {
+        System.out.println(file.getOriginalFilename());
+        System.out.println(file.getSize());
+        System.out.println(file.getContentType());
+
+        this.authorService.avatarUpload(file, authorId);
+
     }
 
 }
